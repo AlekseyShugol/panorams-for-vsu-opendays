@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>VR Панорама</title>
+  <style>
+    html, body { margin:0; height:100%; overflow:hidden; background:black; }
+    #controls {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    #controls button {
+      padding: 10px 20px;
+      background: rgb(49, 48, 48);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    #controls button:hover {
+      background: rgba(255, 255, 255, 0.075);
+    }
+    #currentImage {
+      color: white;
+      background: rgba(0,0,0,0.5);
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin: 0 10px;
+    }
+    #menu {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+    }
+    #backBtn {
+      padding: 10px 20px;
+      background: rgb(49, 48, 48);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    #backBtn:hover {
+      background: rgba(255, 255, 255, 0.075);
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <div id="menu">
+    <button id="backBtn">← Назад в меню</button>
+  </div>
+  <div id="controls">
+    <button id="prevBtn">← Назад</button>
+    <div id="currentImage">Загрузка...</div>
+    <button id="nextBtn">Вперед →</button>
+  </div>
+
+  <script type="module">
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.module.js";
+    import { VRButton } from "https://cdn.jsdelivr.net/npm/three@0.150.0/examples/jsm/webxr/VRButton.js";
+
+    const container = document.getElementById('container');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const currentImageDisplay = document.getElementById('currentImage');
+    const backBtn = document.getElementById('backBtn');
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.xr.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    // VR-кнопка
+    document.body.appendChild(VRButton.createButton(renderer));
+
+    // Создание сферы для панорамы
+    const geometry = new THREE.SphereGeometry(500, 60, 40);
+    geometry.scale(-1, 1, 1);
+    
+    // Автоматическое сканирование папки img
+    let images = [];
+    
+    // Создание материала и меша
+    const textureLoader = new THREE.TextureLoader();
+    const material = new THREE.MeshBasicMaterial();
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+    
+    // Функция для получения списка изображений
+    async function loadImageList() {
+      try {
+        const response = await fetch('/api/images');
+        if (response.ok) {
+          images = await response.json();
+          if (images.length > 0) {
+            loadTexture(0);
+          } else {
+            currentImageDisplay.textContent = 'Нет изображений';
+          }
+        }
+      } catch (error) {
+        console.error('Ошибка загрузки списка изображений:', error);
+        currentImageDisplay.textContent = 'Ошибка загрузки';
+      }
+    }
+    
+    let currentImageIndex = 0;
+    
+    // Загрузка текстуры
+    function loadTexture(index) {
+      if (images.length === 0) return;
+      
+      textureLoader.load(images[index], (texture) => {
+        material.map = texture;
+        material.needsUpdate = true;
+        const fileName = images[index].split('/').pop();
+        currentImageDisplay.textContent = fileName;
+      }, undefined, (error) => {
+        console.error('Ошибка загрузки текстуры:', error);
+        currentImageDisplay.textContent = 'Ошибка загрузки изображения';
+      });
+    }
+    
+    // Функции для смены изображений
+    function nextImage() {
+      if (images.length === 0) return;
+      currentImageIndex = (currentImageIndex + 1) % images.length;
+      loadTexture(currentImageIndex);
+    }
+    
+    function prevImage() {
+      if (images.length === 0) return;
+      currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+      loadTexture(currentImageIndex);
+    }
+    
+    // Обработчики кнопок
+    prevBtn.addEventListener('click', prevImage);
+    nextBtn.addEventListener('click', nextImage);
+    backBtn.addEventListener('click', () => {
+      window.location.href = '/';
+    });
+    
+    // Обработчики клавиатуры
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        prevImage();
+      } else if (event.key === 'ArrowRight') {
+        nextImage();
+      } else if (event.key === 'Escape') {
+        window.location.href = '/';
+      }
+    });
+
+    // Инициализация
+    loadImageList();
+    
+    renderer.setAnimationLoop(() => {
+      renderer.render(scene, camera);
+    });
+    
+    // Адаптация к изменению размера окна
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>

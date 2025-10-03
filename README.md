@@ -73,16 +73,7 @@ http://localhost:8080
 
     VR контроллеры - навигация
 
-##📁 Структура проекта
-vr-panoramas/
-├── 📄 main.py                 # Python HTTP сервер
-├── 📄 main.html              # Главное меню
-├── 📄 panorams.html          # Просмотр панорам (Three.js)
-├── 📄 404.html               # Страница ошибки
-└── 📁 img/                   # Папка для изображений (создается)
-    ├── 🖼️ panorama1.jpg
-    ├── 🖼️ panorama2.jpg
-    └── 🖼️ ...
 
 
-    
+
+

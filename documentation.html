@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VR Панорамы - Документация</title>
     <style>
+           #backBtn {
+      padding: 10px 20px;
+      background: rgb(49, 48, 48);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+     #backBtn:hover {
+      background: rgba(255, 255, 255, 0.075);
+    }
         * {
             margin: 0;
             padding: 0;
@@ -435,7 +448,13 @@ http://localhost:8080
                 </div>
             </div>
         </div>
-
+         <button id="backBtn">← Назад в меню</button>
+           <script type="module">
+            const backBtn = document.getElementById('backBtn');
+                backBtn.addEventListener('click', () => {
+                      window.location.href = '/';
+    });
+           </script>
         <div class="footer">
         
         </div>

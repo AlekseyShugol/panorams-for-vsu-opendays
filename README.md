@@ -1,0 +1,1 @@
+# panorams-for-vsu-opendays

@@ -149,6 +149,8 @@ class SimpleHTTPServer:
                     path = '/panorams.html'
                 elif path == '/games':
                     path = '/games.html'
+                elif path == '/documentation':
+                    path = '/documentation.html'
                 
                 file_path = self.static_dir + path
 

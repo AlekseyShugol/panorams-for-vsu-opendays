@@ -1,22 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <title>Главное меню</title>
-  <style>
-    body { 
-      margin: 0; 
-      padding: 0; 
-      font-family: Arial, sans-serif; 
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      color: white;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .container {
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Выбор игры
+    </title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
       text-align: center;
       max-width: 600px;
     }
@@ -49,16 +52,11 @@
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
-  </style>
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Приложение для просмотра панорам в виртуальной реальности</h1>
-    <div class="menu">
-      <a href="/panorams" class="menu-btn">Панорамы</a>
-      <a href="/games" class="menu-btn">Игры</a>
-      <a href="/documentation" class="menu-btn">Документация</a>
+    <div class = "container">
+        <a href = "/games/guesspanoram" class = "menu-btn">Угадай панораму</a>
     </div>
-  </div>
 </body>
 </html>
